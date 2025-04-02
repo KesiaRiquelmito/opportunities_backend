@@ -1,15 +1,22 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/sequelize';
 import { CreateOpportunityDto } from './dto/create-opportunity.dto';
 import { UpdateOpportunityDto } from './dto/update-opportunity.dto';
+import { Opportunities } from './models/opportunities.model';
 
 @Injectable()
 export class OpportunitiesService {
+  constructor(
+    @InjectModel(Opportunities)
+    private opportunitiesModel: typeof Opportunities,
+  ) {}
+
   create(createOpportunityDto: CreateOpportunityDto) {
     return 'This action adds a new opportunity';
   }
 
-  findAll() {
-    return `This action returns all opportunities`;
+  findAll(): Promise<Opportunities[]> {
+    return this.opportunitiesModel.findAll();
   }
 
   findOne(id: number) {
