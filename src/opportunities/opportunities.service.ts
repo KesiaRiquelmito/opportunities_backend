@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { CreateOpportunityDto } from './dto/create-opportunity.dto';
-import { UpdateOpportunityDto } from './dto/update-opportunity.dto';
 import { Opportunities } from './models/opportunities.model';
+import { Opportunity } from './entities/opportunity.entity';
 
 @Injectable()
 export class OpportunitiesService {
@@ -27,8 +27,17 @@ export class OpportunitiesService {
     });
   }
 
-  update(id: number, updateOpportunityDto: UpdateOpportunityDto) {
-    return `This action updates a #${id} opportunity`;
+  async toggleFollowStatus(id: number): Promise<Opportunity> {
+    const opportunity = await this.opportunitiesModel.findByPk(id);
+    try {
+      if (!opportunity) throw new NotFoundException('Opportunity not found');
+      opportunity.is_followed = !opportunity.is_followed;
+      await opportunity.save();
+      return opportunity;
+    } catch (error) {
+      console.error(error);
+      return []
+    }
   }
 
   remove(id: number) {
