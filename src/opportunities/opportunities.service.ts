@@ -19,8 +19,12 @@ export class OpportunitiesService {
     return this.opportunitiesModel.findAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} opportunity`;
+  findFollowed(): Promise<Opportunities[]> {
+    return this.opportunitiesModel.findAll({
+      where: {
+        is_followed : true,
+      }
+    });
   }
 
   update(id: number, updateOpportunityDto: UpdateOpportunityDto) {
