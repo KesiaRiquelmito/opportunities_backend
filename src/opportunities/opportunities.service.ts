@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -24,22 +25,43 @@ export class OpportunitiesService {
   ): Promise<Opportunities[]> {
     try {
       const where: any = {};
+
+      if (query.type !== undefined && query.type !== 'tender' && query.type !== 'agile') {
+        const message = 'Incorrect query type; must be either "tender" or "agile"';
+        this.logger.error(message);
+        throw new BadRequestException(message);
+      }
+
       if (query.type) {
         where.type = query.type;
       }
+
       if (query.publish_date_start && query.publish_date_end) {
+        const startDate = new Date(query.publish_date_start);
+        const endDate = new Date(query.publish_date_end);
+
+        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+          const message = 'Invalid publish date format; must be in YYYY-MM-DD';
+          this.logger.error(message);
+          throw new BadRequestException(message);
+        }
+
+        if (startDate > endDate) {
+          const message = 'Start date must be before or equal to end date';
+          this.logger.error(message);
+          throw new BadRequestException(message);
+        }
+
         where.publish_date = {
-          [Op.between]: [
-            new Date(query.publish_date_start),
-            new Date(query.publish_date_end),
-          ],
+          [Op.between]: [startDate, endDate],
         };
       }
       return await this.opportunitiesModel.findAll({ where });
     } catch (error) {
-      this.logger.error(`Failed to find opportunities}`, error);
+      if (error instanceof BadRequestException) throw error;
+      this.logger.error('Failed to find followed opportunities', error);
       throw new InternalServerErrorException(
-        'Could not retrieve opportunities',
+        'Could not retrieve followed opportunities',
       );
     }
   }
@@ -48,8 +70,10 @@ export class OpportunitiesService {
     try {
       const where: any = {};
 
-      if (query.type != 'tender' && query.type != 'agile') {
-        this.logger.error('Incorrect query, must be a type tender or agile');
+      if (query.type !== undefined && query.type !== 'tender' && query.type !== 'agile') {
+        const message = 'Incorrect query type; must be either "tender" or "agile"';
+        this.logger.error(message);
+        throw new BadRequestException(message);
       }
 
       if (query.type) {
@@ -57,25 +81,38 @@ export class OpportunitiesService {
       }
 
       if (query.publish_date_start && query.publish_date_end) {
+        const startDate = new Date(query.publish_date_start);
+        const endDate = new Date(query.publish_date_end);
+
+        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+          const message = 'Invalid publish date format; must be in YYYY-MM-DD';
+          this.logger.error(message);
+          throw new BadRequestException(message);
+        }
+
+        if (startDate > endDate) {
+          const message = 'Start date must be before or equal to end date';
+          this.logger.error(message);
+          throw new BadRequestException(message);
+        }
+
         where.publish_date = {
-          [Op.between]: [
-            new Date(query.publish_date_start),
-            new Date(query.publish_date_end),
-          ],
+          [Op.between]: [startDate, endDate],
         };
       }
 
       where.is_followed = true;
-      return this.opportunitiesModel.findAll({
-        where,
-      });
+
+      return await this.opportunitiesModel.findAll({ where });
     } catch (error) {
-      this.logger.error(`Failed to find followed opportunities`, error);
+      if (error instanceof BadRequestException) throw error;
+      this.logger.error('Failed to find followed opportunities', error);
       throw new InternalServerErrorException(
         'Could not retrieve followed opportunities',
       );
     }
   }
+
 
   async toggleFollowStatus(id: number): Promise<Opportunity> {
     try {
