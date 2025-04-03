@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { CreateOpportunityDto } from './dto/create-opportunity.dto';
 import { Opportunities } from './models/opportunities.model';
 import { Opportunity } from './entities/opportunity.entity';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class OpportunitiesService {
@@ -11,19 +11,44 @@ export class OpportunitiesService {
     private opportunitiesModel: typeof Opportunities,
   ) {}
 
-  create(createOpportunityDto: CreateOpportunityDto) {
-    return 'This action adds a new opportunity';
+  findAllOpportunities(query: any): Promise<Opportunities[]> {
+    const where: any = {};
+
+    if (query.type) {
+      where.type = query.type;
+    }
+
+    if (query.publish_date_start && query.publish_date_end) {
+      where.publish_date = {
+        [Op.between]: [
+          new Date(query.publish_date_start),
+          new Date(query.publish_date_end),
+        ],
+      };
+    }
+
+    return this.opportunitiesModel.findAll({ where });
   }
 
-  findAll(): Promise<Opportunities[]> {
-    return this.opportunitiesModel.findAll();
-  }
+  findFollowed(query: any): Promise<Opportunities[]> {
+    const where: any = {};
 
-  findFollowed(): Promise<Opportunities[]> {
+    if (query.type) {
+      where.type = query.type;
+    }
+
+    if (query.publish_date_start && query.publish_date_end) {
+      where.publish_date = {
+        [Op.between]: [
+          new Date(query.publish_date_start),
+          new Date(query.publish_date_end),
+        ],
+      };
+    }
     return this.opportunitiesModel.findAll({
       where: {
-        is_followed : true,
-      }
+        is_followed: true,
+      },
     });
   }
 
@@ -36,11 +61,7 @@ export class OpportunitiesService {
       return opportunity;
     } catch (error) {
       console.error(error);
-      return []
+      return [];
     }
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} opportunity`;
   }
 }
