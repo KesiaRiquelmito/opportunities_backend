@@ -1,24 +1,26 @@
-import { Table, Column, Model } from 'sequelize-typescript';
+import { Table, Column, Model, DataType } from 'sequelize-typescript';
 
 @Table({
+  tableName: 'Opportunities',
   timestamps: false,
 })
-export class Opportunities extends Model {
-  @Column
-  code: string;
+export class Opportunities extends Model<Opportunities> {
+  //Use declare fields avoid creating the class fields that conflict with Sequelize's mechanisms
+  @Column({ type: DataType.STRING })
+  declare code: string;
 
-  @Column
-  title: string;
+  @Column({ type: DataType.TEXT })
+  declare title: string;
 
-  @Column
-  type: string;
+  @Column({ type: DataType.STRING })
+  declare type: string;
 
-  @Column
-  is_followed: boolean;
+  @Column({ type: DataType.BOOLEAN })
+  declare is_followed: boolean;
 
-  @Column
-  publish_date: Date;
+  @Column({ type: DataType.DATE })
+  declare publish_date: Date;
 
-  @Column
-  close_date: Date;
+  @Column({ type: DataType.DATE })
+  declare close_date: Date;
 }

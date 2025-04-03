@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { OpportunitiesService } from './opportunities.service';
 import { CreateOpportunityDto } from './dto/create-opportunity.dto';
 import { UpdateOpportunityDto } from './dto/update-opportunity.dto';
+import { Opportunity } from './entities/opportunity.entity';
 
 @Controller('opportunities')
 export class OpportunitiesController {
@@ -22,9 +23,9 @@ export class OpportunitiesController {
     return this.opportunitiesService.findFollowed();
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOpportunityDto: UpdateOpportunityDto) {
-    return this.opportunitiesService.update(+id, updateOpportunityDto);
+  @Patch(':id/toggle-follow')
+  async toggleFollow(@Param('id') id: number):Promise<Opportunity> {
+    return this.opportunitiesService.toggleFollowStatus(+id);
   }
 
   @Delete(':id')
