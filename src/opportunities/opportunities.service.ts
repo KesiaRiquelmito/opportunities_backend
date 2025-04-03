@@ -46,12 +46,10 @@ export class OpportunitiesService {
 
   async findFollowed(query: OpportunityQueryDto): Promise<Opportunities[]> {
     try {
-      console.log('hola');
       const where: any = {};
 
       if (query.type != 'tender' && query.type != 'agile') {
         this.logger.error('Incorrect query, must be a type tender or agile');
-        return [];
       }
 
       if (query.type) {
@@ -66,9 +64,10 @@ export class OpportunitiesService {
           ],
         };
       }
+
       where.is_followed = true;
       return this.opportunitiesModel.findAll({
-        where
+        where,
       });
     } catch (error) {
       this.logger.error(`Failed to find followed opportunities`, error);
