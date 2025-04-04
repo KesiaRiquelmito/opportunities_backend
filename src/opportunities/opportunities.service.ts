@@ -26,7 +26,7 @@ export class OpportunitiesService {
     try {
       const where: any = {};
 
-      if (query.type !== undefined && query.type !== 'tender' && query.type !== 'agile') {
+      if (query.type !== undefined && query.type !== 'tender' && query.type !== 'agile' && query.type) {
         const message = 'Incorrect query type; must be either "tender" or "agile"';
         this.logger.error(message);
         throw new BadRequestException(message);
