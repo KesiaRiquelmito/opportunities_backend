@@ -17,7 +17,7 @@ DB_NAME=opportunities
 ```
 
 ### Create the database (name: opportunities)
-```
+```bash
 $ createdb -U postgres -W --encoding=UTF8 opportunities
 ```
 
