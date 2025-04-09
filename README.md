@@ -1,35 +1,34 @@
 ## Description
 
-Opportunities repository. 
+NestJS + Sequelize API for managing "Opportunities". This project includes a PostgreSQL database and supports filters, toggle-follow, and frontend integration.
 
 ## Requirements
 1. Ensure PostgreSQL is Installed
 - You must have PostgreSQL installed on your system. If it's not yet installed:
 - Go to the official PostgreSQL site: https://www.postgresql.org/download/
 
-2. Ensure that the PostgreSQL is in the System PATH.
-- Open the Start Menu → Search for "Environment Variables".
-- Click "Edit the system environment variables".
-- In the "System Properties" window, click "Environment Variables".
-- Under System Variables, find and select Path, then click Edit.
-- Click New, and add the path to PostgreSQL’s bin folder. 
-- Example (depending on version): C:\Program Files\PostgreSQL\15\bin
-- Restart PowerSheel or terminal.
+2. **Create the Database**
 
+The project expects a local PostgreSQL database named `opportunities`.  
+Make sure your `.env` file includes:
 
+```env
+DB_NAME=opportunities
 ```
-# create database
-$ createdb -U postgres -W --encoding=UTF8 nestjs_app
 
+### Create the database (name: opportunities)
+```
+$ createdb -U postgres -W --encoding=UTF8 opportunities
+```
 
-# the password is the same as the postgres setup
+The password will be the one you set up for the 'postgres' user
 
-# connect the local database
-$ psql -U postgres -d nestjs_app -f./db_sql.sql
+### Run the SQL script to create and populate the Opportunities table
+```bash
+$ psql -U postgres -d opportunities -f./db_sql.sql
 ```
 
 ## Project setup
-
 ```bash
 $ yarn install
 ```
